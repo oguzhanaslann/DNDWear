@@ -23,43 +23,12 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        setDragAndDropForHat()
+        setDragAndDropForBody()
+        setDragAndDropForPaths()
+    }
 
-
-        DropHelper.configureView(
-            this,
-            binding.hatImageView,
-            arrayOf(MIMETYPE_TEXT_PLAIN, "image/*"),
-            DropHelper.Options.Builder()
-                .setHighlightColor(Color.GREEN)
-                .build()
-        ) { _, payload ->
-            Log.e("TAG", "onCreate: ${payload.clip.description.label} ", )
-            val isHat = binding.hatImage.tag == payload.clip.description.label
-            if (isHat) {
-                binding.hatImageView.setImageBitmap(binding.hatImage.drawable.toBitmap())
-            }
-
-            null
-        }
-
-
-        DropHelper.configureView(
-            this,
-            binding.bodyImageView,
-            arrayOf(MIMETYPE_TEXT_PLAIN, "image/*"),
-            DropHelper.Options.Builder()
-                .setHighlightColor(Color.GREEN)
-                .build()
-        ) { _, payload ->
-            Log.e("TAG", "onCreate: ${payload.clip.description.label} ", )
-            val isBody = binding.bodyImage.tag == payload.clip.description.label
-            if (isBody) {
-                binding.bodyImageView.setImageBitmap(binding.bodyImage.drawable.toBitmap())
-            }
-
-            null
-        }
-
+    private fun setDragAndDropForPaths() {
         DropHelper.configureView(
             this,
             binding.panthsImageView,
@@ -68,10 +37,87 @@ class MainActivity : AppCompatActivity() {
                 .setHighlightColor(Color.GREEN)
                 .build()
         ) { _, payload ->
-            Log.e("TAG", "onCreate: ${payload.clip.description.label} ", )
+            Log.e("TAG", "onCreate: ${payload.clip.description.label} ")
             val isBody = binding.panthsImage.tag == payload.clip.description.label
             if (isBody) {
                 binding.panthsImageView.setImageBitmap(binding.panthsImage.drawable.toBitmap())
+            }
+
+            null
+        }
+
+
+
+
+
+        DragStartHelper(binding.panthsImage) { view, _ ->
+            // Sets the appropriate MIME types automatically.
+            view.tag = "content://com.oguzhanaslann.draganddropexample/panthsImage"
+            val data = ClipData(
+                view.tag as CharSequence,
+                arrayOf(MIMETYPE_TEXT_PLAIN),
+                ClipData.Item(view.tag as CharSequence)
+            )
+            val dragShadow = View.DragShadowBuilder(view)
+
+            view.startDragAndDrop(
+                data,
+                dragShadow,
+                null,
+                DRAG_FLAG_GLOBAL or DRAG_FLAG_GLOBAL_URI_READ
+            )
+        }.attach()
+    }
+
+    private fun setDragAndDropForBody() {
+        DropHelper.configureView(
+            this,
+            binding.bodyImageView,
+            arrayOf(MIMETYPE_TEXT_PLAIN, "image/*"),
+            DropHelper.Options.Builder()
+                .setHighlightColor(Color.GREEN)
+                .build()
+        ) { _, payload ->
+            Log.e("TAG", "onCreate: ${payload.clip.description.label} ")
+            val isBody = binding.bodyImage.tag == payload.clip.description.label
+            if (isBody) {
+                binding.bodyImageView.setImageBitmap(binding.bodyImage.drawable.toBitmap())
+            }
+
+            null
+        }
+
+        DragStartHelper(binding.bodyImage) { view, _ ->
+            view.tag = "content://com.oguzhanaslann.draganddropexample/bodyImage"
+            val data = ClipData(
+                view.tag as CharSequence,
+                arrayOf(MIMETYPE_TEXT_PLAIN),
+                ClipData.Item(view.tag as CharSequence)
+            )
+            val dragShadow = View.DragShadowBuilder(view)
+
+            view.startDragAndDrop(
+                data,
+                dragShadow,
+                null,
+                DRAG_FLAG_GLOBAL or DRAG_FLAG_GLOBAL_URI_READ
+            )
+        }.attach()
+    }
+
+    private fun setDragAndDropForHat() {
+        DropHelper.configureView(
+            this,
+            binding.hatImageView,
+            arrayOf(MIMETYPE_TEXT_PLAIN, "image/*"),
+            DropHelper.Options.Builder()
+                .setHighlightColor(Color.GREEN)
+                .build()
+        ) { _, payload ->
+            Log.e("TAG", "onCreate: ${payload.clip.description.label} ")
+            val isHat = binding.hatImage.tag == payload.clip.description.label
+            if (isHat) {
+                binding.hatImageView.setImageBitmap(binding.hatImage.drawable.toBitmap())
             }
 
             null
@@ -93,41 +139,5 @@ class MainActivity : AppCompatActivity() {
                 DRAG_FLAG_GLOBAL or DRAG_FLAG_GLOBAL_URI_READ
             )
         }.attach()
-
-        DragStartHelper(binding.bodyImage) { view, _ ->
-            view.tag = "content://com.oguzhanaslann.draganddropexample/bodyImage"
-            val data = ClipData(
-                view.tag as CharSequence,
-                arrayOf(MIMETYPE_TEXT_PLAIN),
-                ClipData.Item(view.tag as CharSequence)
-            )
-            val dragShadow = View.DragShadowBuilder(view)
-
-            view.startDragAndDrop(
-                data,
-                dragShadow,
-                null,
-                DRAG_FLAG_GLOBAL or DRAG_FLAG_GLOBAL_URI_READ
-            )
-        }.attach()
-
-        DragStartHelper(binding.panthsImage) { view, _ ->
-            // Sets the appropriate MIME types automatically.
-            view.tag = "content://com.oguzhanaslann.draganddropexample/panthsImage"
-            val data = ClipData(
-                view.tag as CharSequence,
-                arrayOf(MIMETYPE_TEXT_PLAIN),
-                ClipData.Item(view.tag as CharSequence)
-            )
-            val dragShadow = View.DragShadowBuilder(view)
-
-            view.startDragAndDrop(
-                data,
-                dragShadow,
-                null,
-                DRAG_FLAG_GLOBAL or DRAG_FLAG_GLOBAL_URI_READ
-            )
-        }.attach()
-
     }
 }
